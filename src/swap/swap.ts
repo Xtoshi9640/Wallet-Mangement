@@ -19,36 +19,19 @@ export async function confirmVtxn(txn: VersionedTransaction) {
 export const swap = async (swapParam: SwapParam): Promise<string | null> => {
   try {
     let vTxn;
-    console.log("- swap 1");
     if (swapParam.isSellAll && swapParam.amount < 1000_000) {
-      console.log("- swap 2");
-
       vTxn = await tokenClose(swapParam.mint, swapParam.amount);
     } else {
-      console.log("- swap 3");
-
       vTxn = await raydiumSwap(swapParam);
       if (!vTxn) {
-        console.log("- swap 4");
-
         vTxn = await pumpfunSwap(swapParam);
       }
     }
-    console.log("- swap 5");
-
     if (!vTxn) return null;
-    console.log("- swap 6");
-
     vTxn.sign([wallet]);
-    console.log("- swap 7");
-
     await simulateTxn(vTxn);
-    console.log("- swap 8");
-
     const result = await confirmVtxn(vTxn);
     if (!result) return null;
-    console.log("- swap 9");
-
     const { txHash } = result;
     return txHash;
   } catch (e: any) {

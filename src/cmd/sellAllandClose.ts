@@ -24,8 +24,7 @@ export async function tokenSellAllAndClose() {
   const now_tokens = await getWalletTokens(wallet.publicKey);
   if (now_tokens.length > 0) {
     console.log(chalk.red(`[ - ] token Close: failed. There are ${now_tokens.length} tokens in your wallet.`));
+    return;
   }
-  else {
-    console.log(chalk.green(`[ - ] token Close: success. There are no tokens in your wallet.`));
-  }
+  console.log(chalk.green(`[ - ] token Close: success. There are no tokens in your wallet.`));
 }
