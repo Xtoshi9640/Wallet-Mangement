@@ -9,8 +9,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-function displayMenu() {
-  console.log(chalk.blue("\n====== Solana Token Manager ======"));
+function displayMenu() {    
   console.log("1. Check SOL balance");
   console.log("2. Check wallet tokens");
   console.log("3. Sell all and close tokens");
@@ -50,7 +49,15 @@ async function handleUserInput() {
 }
 
 async function main() {
-  console.log(chalk.green("Welcome to Solana Token Manager"));
+  console.log(chalk.blue(`
+    ╔══════════════════════════════════════════════════════════════╗
+    ║                                                              ║
+    ║              Welcome to Solana Token Manager                 ║
+    ║                                                              ║
+    ║           Manage your Solana tokens efficiently              ║
+    ║                                                              ║
+    ╚══════════════════════════════════════════════════════════════╝
+    `));
   handleUserInput();
 }
 
