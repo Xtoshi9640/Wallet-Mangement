@@ -3,6 +3,7 @@ import { checkSolBalance } from './cmd/checkSOLBalance';
 import { checkWalletTokens } from './cmd/checkTokenBalance';
 import { tokenSellAllAndClose } from './cmd/sellAllandClose';
 import chalk from 'chalk';
+import { wallet } from './config/config';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -49,15 +50,17 @@ async function handleUserInput() {
 }
 
 async function main() {
-  console.log(chalk.blue(`
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                                                              ║
-    ║              Welcome to Solana Token Manager                 ║
-    ║                                                              ║
-    ║           Manage your Solana tokens efficiently              ║
-    ║                                                              ║
-    ╚══════════════════════════════════════════════════════════════╝
+  console.log(chalk.green(`
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║              Welcome to Solana Token Manager                 ║
+║                                                              ║
+║           Manage your Solana tokens efficiently              ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
     `));
+  const walletAddress = wallet.publicKey.toBase58();
+  console.log(chalk.blue(`Wallet Address: ${walletAddress}`));
   handleUserInput();
 }
 

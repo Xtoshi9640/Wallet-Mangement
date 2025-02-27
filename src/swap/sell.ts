@@ -19,7 +19,7 @@ export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boo
       }
 
       const txHash = await swap(swapParam);
-      console.log("txHash", txHash);
+      console.log(`https://solscan.io/tx/${txHash}`);
     } catch (error) {
       console.log(error);
       return null;

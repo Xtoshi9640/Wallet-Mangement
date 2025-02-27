@@ -1,9 +1,9 @@
 import { VersionedTransaction } from "@solana/web3.js";
 import { connection, wallet } from "../config/config";
-import { JitoBundleService } from "./jito/jito";
 import { tokenClose } from "./tokenClose";
-import { simulateTxn } from "../utils/utils";
 import { SwapParam } from "../utils/types";
+import { simulateTxn } from "../utils/utils";
+import { JitoBundleService } from "./jito/jito";
 import { raydiumSwap } from "./raydium/raydiumSwap";
 import { pumpfunSwap } from "./pumpfun/pumpfunSwap";
 
@@ -19,7 +19,7 @@ export async function confirmVtxn(txn: VersionedTransaction) {
 export const swap = async (swapParam: SwapParam): Promise<string | null> => {
   try {
     let vTxn;
-    if (swapParam.isSellAll && swapParam.amount < 1000_000) {
+    if (swapParam.isSellAll && swapParam.amount < 1_000_000) {
       vTxn = await tokenClose(swapParam.mint, swapParam.amount);
     } else {
       vTxn = await raydiumSwap(swapParam);

@@ -20,7 +20,7 @@ export const tokenClose = async (
   amount: number
 ): Promise<VersionedTransaction | null> => {
   if (!mint) return null;
-  console.log("tokenclose function called", amount);
+  // console.log("tokenclose function called", amount);
   let instructions: TransactionInstruction[] = [];
 
   const tip = 0.000_001;
@@ -40,7 +40,7 @@ export const tokenClose = async (
   .findByMint({ mintAddress: new PublicKey(mint) });
   const decimals = metaData.mint.decimals || 6;
   if (amount > 0) {
-    console.log("amount is larger than 0", amount);
+    // console.log("amount is larger than 0", amount);
     instructions.push(
       createBurnCheckedInstruction( // token burn instruction
         splAta,

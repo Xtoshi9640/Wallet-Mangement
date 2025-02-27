@@ -4,8 +4,10 @@
   "main": "index.js",
   "author": "plzbugmenot",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "start": "set NODE_NO_WARNINGS=1 && ts-node src/index.ts",
+    "build": "tsc",
+    "dev": "set NODE_NO_WARNINGS=1 && ts-node-dev --respawn src/index.ts"
+
   },
   "keywords": [],
   "license": "ISC",
