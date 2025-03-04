@@ -1,7 +1,7 @@
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { connection, wallet } from "../config/config";
-import { getSolPrice } from "../utils/utils";
 import chalk from "chalk";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { getSolPrice } from "../utils/utils";
+import { connection, wallet } from "../config/config";
 
 export async function checkSolBalance() {
   const balance = await connection.getBalance(wallet.publicKey);

@@ -1,10 +1,10 @@
+import { swap } from "./swap";
 import { SwapParam } from "../utils/types";
 import { getPumpData } from "./pumpfun/utils";
-import { swap } from "./swap";
 
 export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boolean) => {
     try {
-      const _tip = 0.00001;
+      const _tip = 0.000_01;
       const pumpData = await getPumpData(mint);
       const swapParam: SwapParam = {
         mint: mint,

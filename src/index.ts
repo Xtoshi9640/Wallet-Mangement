@@ -60,7 +60,7 @@ async function main() {
 ╚══════════════════════════════════════════════════════════════╝
     `));
   const walletAddress = wallet.publicKey.toBase58();
-  console.log(chalk.blue(`Wallet Address: ${walletAddress}`));
+  console.log(chalk.green(`Wallet Address: ${walletAddress}`));
   handleUserInput();
 }
 
