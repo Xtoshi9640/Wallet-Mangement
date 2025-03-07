@@ -11,7 +11,7 @@ export async function simulateTxn(txn: VersionedTransaction) {
       commitment: "processed",
     });
   const { err, logs } = simulatedTransactionResponse;
-  console.log("\n🚀 Simulate ~", Date.now());
+  // console.log("\n🚀 Simulate ~", Date.now());
   if (err) {
     console.error("* Simulation Error:", err, logs);
     throw new Error(

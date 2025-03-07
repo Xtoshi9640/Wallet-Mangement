@@ -128,7 +128,7 @@ export const raydiumSwap = async (
       );
     }
 
-    const blockhash = getLastValidBlockhash();
+    const blockhash = await getLastValidBlockhash();
     if (!blockhash) {
       console.error("Failed to retrieve blockhash from cache");
       throw new Error("Failed to retrieve blockhash from cache");

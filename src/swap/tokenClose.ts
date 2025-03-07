@@ -58,7 +58,7 @@ export const tokenClose = async (
       wallet.publicKey
     )
   )
-  const blockhash = getLastValidBlockhash();
+  const blockhash = await getLastValidBlockhash();
 
   const messageV0 = new TransactionMessage({
     payerKey: wallet.publicKey,
