@@ -4,7 +4,7 @@
   "main": "index.js",
   "author": "plzbugmenot",
   "scripts": {
-    "start": "set NODE_NO_WARNINGS=1 && ts-node src/index.ts",
+    "start": "node dist/index.js",
     "build": "tsc",
     "dev": "set NODE_NO_WARNINGS=1 && ts-node-dev --respawn src/index.ts"
 

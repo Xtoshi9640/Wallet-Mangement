@@ -58,7 +58,7 @@ export async function solTransfer(rl: any): Promise<void> {
             } else {
               const { txHash } = result;
               console.log(
-                chalk.green(`Transaction successful! https://solscan.io/tx/${txHash}`)
+                chalk.green(`Transaction confirmed. https://solscan.io/tx/${txHash}`)
               );
             }
             resolve();
