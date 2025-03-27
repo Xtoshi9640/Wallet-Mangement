@@ -22,9 +22,9 @@ export const swap = async (swapParam: SwapParam): Promise<string | null> => {
     if (swapParam.isSellAll && swapParam.amount < 1_000_000) {
       vTxn = await tokenClose(swapParam.mint, swapParam.amount);
     } else {
-      vTxn = await raydiumSwap(swapParam);
+      vTxn = await pumpfunSwap(swapParam);
       if (!vTxn) {
-        vTxn = await pumpfunSwap(swapParam);
+        vTxn = await raydiumSwap(swapParam);
       }
     }
     if (!vTxn) return null;

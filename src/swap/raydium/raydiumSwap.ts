@@ -40,7 +40,7 @@ export const raydiumSwap = async (
 ): Promise<VersionedTransaction | null> => {
   try {
     const { mint, amount, slippage, tip, is_buy } = swapParam;
-    console.log("raydiumSwap", mint, amount, slippage, tip, is_buy);
+    console.log("[ raydiumSwap ]", mint, amount, slippage, tip, is_buy);
     const slippageP = new Percent(slippage, 100);
 
     const metaData = await metaplex

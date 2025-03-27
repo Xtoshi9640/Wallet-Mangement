@@ -10,6 +10,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT } from "@solana/spl-token";
 import { connection } from "../../config/config";
+import chalk from "chalk";
 
 // Function to fetch pool info using a mint address
 export async function fetchPoolInfoByMint(
@@ -61,7 +62,7 @@ export async function fetchPoolInfoByMint(
 
       if (quoteAccounts.length === 0) {
         // throw new Error(`No pool found for mint: ${mint}`);
-        console.log(`No pool found for mint: ${mint}`);
+        console.log(chalk.red(`[ Raydium ]No pool found on Raydium: ${mint}`));
         return null;
       }
 

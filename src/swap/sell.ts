@@ -1,6 +1,7 @@
 import { swap } from "./swap";
 import { SwapParam } from "../utils/types";
 import { getPumpData } from "./pumpfun/utils";
+import chalk from "chalk";
 
 export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boolean) => {
     try {
@@ -19,7 +20,7 @@ export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boo
       }
 
       const txHash = await swap(swapParam);
-      console.log(`https://solscan.io/tx/${txHash}`);
+      console.log(chalk.green(`[ - ] Sold https://solscan.io/tx/${txHash}`));
     } catch (error) {
       console.log(error);
       return null;
