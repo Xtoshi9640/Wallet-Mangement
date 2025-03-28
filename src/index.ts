@@ -37,7 +37,7 @@ async function handleUserInput() {
           await tokenSellAllAndClose();
           break;
         case '4':
-          console.log(chalk.green("Goodbye!\n2/5/2025, v1.0.0, by @plzbugmenot"));
+          console.log(chalk.green("Goodbye!\n2/5/2025, v1.1.0, by @plzbugmenot"));
           rl.close();
           process.exit(0);
         default:
