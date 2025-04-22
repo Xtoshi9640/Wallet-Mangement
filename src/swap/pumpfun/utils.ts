@@ -35,12 +35,8 @@ export async function getPumpDataUtils(
     TOTAL_SUPPLY: 0x28,
   };
   const response = await connection.getAccountInfo(bondingCurve);
-  if (response === null) {
-    // await sleepTime(1000);
-    // return await getPumpData(mint);
-    // throw new Error("curve account not found");
-    return null;
-  }
+  if (!response) return null;
+  
   // Use BigInt to read the big numbers in the data buffer
   const virtualTokenReserves = readBigUintLE(
     response.data,

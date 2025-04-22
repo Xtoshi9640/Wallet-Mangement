@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "npx ts-node src/index.ts"
+    "dev": "npx ts-node src/index.ts",
+    "test": "npx ts-node src/test/test.ts"
 
   },
   "keywords": [],

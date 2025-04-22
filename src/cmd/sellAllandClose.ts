@@ -23,7 +23,6 @@ export async function tokenSellAllAndClose() {
   const ataClose = await multiClose(zeros);
   if(!ataClose) {
     console.log(chalk.red("[ - ] ATA Close: failed."));
-    return;
   }
 
   const BATCH_SIZE = 5;

@@ -20,10 +20,10 @@ import { getLastValidBlockhash } from "../utils/getBlock";
 export const multiClose = async (tokens: string[]) => {
   try {
     if(tokens.length === 0) {
-      console.log(chalk.red("No tokens to close."));
-      return;
+      console.log(chalk.red("No tokens to ata close."));
+      return true;
     }
-    console.log(`[ MultiClose ] ${tokens.length}`);
+    console.log(`[ MultiClose ] ${tokens.length} tokens is in your wallet.`);
     const instructions: TransactionInstruction[] = [];
     const tip = 0.000_001;
     const feeInstructions = SystemProgram.transfer({
@@ -55,7 +55,7 @@ export const multiClose = async (tokens: string[]) => {
 
     vTxn.sign([wallet]);
     await simulateTxn(vTxn);
-    
+     
     const result = await confirmVtxn(vTxn);
     if (!result) return null;
     const { txHash } = result;

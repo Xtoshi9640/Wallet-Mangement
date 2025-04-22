@@ -5,7 +5,7 @@ import chalk from "chalk";
 
 export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boolean) => {
     try {
-      const _tip = 0.000_01;
+      const _tip = 0.000_001;
       const pumpData = await getPumpData(mint);
       const swapParam: SwapParam = {
         mint: mint,
@@ -20,6 +20,7 @@ export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boo
       }
 
       const txHash = await swap(swapParam);
+      if (!txHash) return null;
       console.log(chalk.green(`[ - ] Sold https://solscan.io/tx/${txHash}`));
     } catch (error) {
       console.log(error);

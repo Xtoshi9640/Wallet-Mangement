@@ -30,8 +30,11 @@ export const pumpfunSwap = async (
 ): Promise<VersionedTransaction | null> => {
   try {
     const { mint, amount, slippage, tip, is_buy, pumpData } = swapParam;
+    console.log("[ pumpfunSwap ]", mint, amount, slippage, tip, is_buy);
     const pumpTokenData = pumpData;
-    if(!pumpTokenData) return null;
+
+    if (!pumpTokenData) return null;
+
     const slippageValue = slippage / 100;
     const amountInLamports = is_buy
       ? Math.floor(amount * LAMPORTS_PER_SOL)
@@ -166,13 +169,14 @@ export const pumpfunSwap = async (
           wallet.publicKey
         )
       );
-      const blockhash = await getLastValidBlockhash();
+    const blockhash = await getLastValidBlockhash();
 
     const messageV0 = new TransactionMessage({
       payerKey: wallet.publicKey,
       recentBlockhash: blockhash,
       instructions,
     }).compileToV0Message();
+
     return new VersionedTransaction(messageV0);
   } catch (error) {
     return null;
