@@ -1,6 +1,6 @@
 import { PublicKey, VersionedTransaction } from "@solana/web3.js";
 import { connection, wallet } from "../config/config";
-import { AccountLayout,  TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { AccountLayout,  getAssociatedTokenAddressSync,  TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { SPL_ACCOUNT_LAYOUT, TokenAccount } from "@raydium-io/raydium-sdk";
 import { WSOL } from "./constants";
 
@@ -111,3 +111,35 @@ export const getSolPrice = async () => {
     return 0;
   }
 };
+
+
+export async function getTokenBalance(
+  walletAddress: string,
+  tokenMintAddress: string
+) {
+  let attempts = 0;
+  const maxAttempts = 3;
+  
+  while (attempts < maxAttempts) {
+    try {
+      // Get associated token account
+      const associatedTokenAddress = getAssociatedTokenAddressSync(
+        new PublicKey(tokenMintAddress),
+        new PublicKey(walletAddress)
+      );
+      const tokenAccountInfo = await connection.getTokenAccountBalance(
+        associatedTokenAddress
+      );
+
+      return Number(tokenAccountInfo.value.amount);
+    } catch (error) {
+      attempts++;
+      if (attempts >= maxAttempts) {
+        return 0;
+      }
+      // Wait before retrying
+      await sleepTime(1000);
+    }
+  }
+  return 0;
+}

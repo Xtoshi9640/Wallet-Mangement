@@ -1,23 +1,24 @@
+import chalk from "chalk";
 import { swap } from "./swap";
 import { SwapParam } from "../utils/types";
 import { getPumpData } from "./pumpfun/utils";
-import chalk from "chalk";
 
 export const sellTokenSwap = async (mint: string, amount: number, isSellAll: boolean) => {
     try {
-      const _tip = 0.000_001;
       const pumpData = await getPumpData(mint);
+      if(!pumpData) {
+        console.log(chalk.red(`[ - ] No pump data found for ${mint}`));
+        return null;
+      }
       const swapParam: SwapParam = {
-        mint: mint,
-        amount: amount, // no decimals
-        tip: _tip, // no decimals
+        mint,
+        dev: pumpData.dev,
+        amount, // no decimals
         slippage: 100, // 0.1 ~ 100
         is_buy: false,
         isSellAll,
+        pumpData
       };
-      if(pumpData) {
-        swapParam.pumpData = pumpData;
-      }
 
       const txHash = await swap(swapParam);
       if (!txHash) return null;

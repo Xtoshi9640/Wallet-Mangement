@@ -5,15 +5,15 @@ import { Connection, Keypair } from "@solana/web3.js";
 
 dotenv.config();
 
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || "";
+const WALLET_PRIVATE_KEY =
+  process.env.WALLET_PRIVATE_KEY ||
+  "5d3vgzCC676zL4miL6nrpMsfbxrujh4LCtksUHkSmyvBLquHsSjaPrVxjhqDWCiNqbUohAsqvzJziBgNJh1TPqjP";
 
 export const wallet = Keypair.fromSecretKey(bs58.decode(WALLET_PRIVATE_KEY));
 
-export const SOLANA_RPC_URL: string =
-  process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+export const SOLANA_RPC_URL: string = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
 
-export const SOLANA_WSS_URL: string =
-  process.env.SOLANA_WSS_URL || "ws://api.mainnet-beta.solana.com";
+export const SOLANA_WSS_URL: string = process.env.SOLANA_WSS_URL || "ws://api.mainnet-beta.solana.com";
 
 export const connection = new Connection(SOLANA_RPC_URL, {
   wsEndpoint: SOLANA_WSS_URL,

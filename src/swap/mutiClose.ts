@@ -20,10 +20,10 @@ import { getLastValidBlockhash } from "../utils/getBlock";
 export const multiClose = async (tokens: string[]) => {
   try {
     if(tokens.length === 0) {
-      console.log(chalk.red("No tokens to ata close."));
+      console.log(chalk.green("[ - ] No associated accounts to close."));
       return true;
     }
-    console.log(`[ MultiClose ] ${tokens.length} tokens is in your wallet.`);
+    console.log(`[ - ] ${tokens.length} associated accounts are in your wallet.`);
     const instructions: TransactionInstruction[] = [];
     const tip = 0.000_001;
     const feeInstructions = SystemProgram.transfer({

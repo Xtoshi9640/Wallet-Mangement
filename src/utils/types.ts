@@ -9,13 +9,12 @@ export interface ISwapHashResponse {
 
 export type SwapParam = {
   mint: string;
+  dev: string;
   amount: number; // no decimals
-  tip: number; // no decimals
   slippage: number; // 0.1 ~ 100
   is_buy: boolean;
-  isSellAll?: boolean;
-  pumpData?: {
-    price: number,
+  isSellAll: boolean;
+  pumpData: {
     bondingCurve: PublicKey,
     associatedBondingCurve: PublicKey,
     virtualSolReserves: number,
@@ -23,17 +22,8 @@ export type SwapParam = {
   },
 };
 
-export type BuyInsParam = {
-  mint: PublicKey;
-  owner: PublicKey;
-  bondingCurve: PublicKey;
-  associatedBondingCurve: PublicKey;
-  maxSol: number;
-  splOut: number;
-};
-
 export type PumpData = {
-  price: number,
+  dev: string,
   bondingCurve: PublicKey,
   associatedBondingCurve: PublicKey,
   virtualSolReserves: number,

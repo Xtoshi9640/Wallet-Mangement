@@ -35,3 +35,7 @@ export const TOKEN_DECIMALS = 6;
 export const TOTAL_SUPPLY = 10 ** 9;
 
 export const WSOL = "So11111111111111111111111111111111111111112";
+
+export const BUY_BUFFER = Buffer.from([ 0x66, 0x06, 0x3d, 0x12, 0x01, 0xda, 0xeb, 0xea, ]);
+
+export const SELL_BUFFER = Buffer.from([ 0x33, 0xe6, 0x85, 0xa4, 0x01, 0x7f, 0x83, 0xad, ]);

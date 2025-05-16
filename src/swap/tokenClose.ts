@@ -1,12 +1,9 @@
 import {
-  LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
   TransactionInstruction,
   TransactionMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
-import { JitoAccounts } from "./jito/jito";
 import {
   createBurnCheckedInstruction,
   createCloseAccountInstruction,
@@ -23,13 +20,6 @@ export const tokenClose = async (
   // console.log("tokenclose function called", amount);
   let instructions: TransactionInstruction[] = [];
 
-  const tip = 0.000_001;
-  const feeInstructions = SystemProgram.transfer({
-    fromPubkey: wallet.publicKey,
-    toPubkey: new PublicKey(JitoAccounts[1]),
-    lamports: tip * LAMPORTS_PER_SOL,
-  });
-  instructions.push(feeInstructions);
   const splAta = getAssociatedTokenAddressSync(
     new PublicKey(mint),
     wallet.publicKey,
