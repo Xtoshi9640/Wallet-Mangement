@@ -1,26 +1,26 @@
 import {
   PublicKey,
+  SystemProgram,
   LAMPORTS_PER_SOL,
   TransactionMessage,
   VersionedTransaction,
-  TransactionInstruction,
-  SystemProgram,
   ComputeBudgetProgram,
+  TransactionInstruction,
 } from "@solana/web3.js";
 import {
+  WSOL,
   GLOBAL,
   BUY_BUFFER,
   SELL_BUFFER,
-  EVENT_AUTHORITY,
-  PUMP_FEE_RECIPIENT,
-  PUMP_FUN_PROGRAM,
-  WSOL,
-  PUMP_AMM_PROGRAM,
   GLOBAL_CONFIG,
-  PROTOCOL_FEE_RECEPCIENT,
-  PROTOCOL_FEE_RECEPCIENT_TOKEN_ACCOUNT,
   TOKEN_PROGRAM,
+  EVENT_AUTHORITY,
+  PUMP_FUN_PROGRAM,
+  PUMP_AMM_PROGRAM,
+  PUMP_FEE_RECIPIENT,
+  PROTOCOL_FEE_RECEPCIENT,
   EVENT_AUTHORITY_PUMPSWAP,
+  PROTOCOL_FEE_RECEPCIENT_TOKEN_ACCOUNT,
 } from "../../utils/constants";
 import * as spl from "@solana/spl-token";
 import { SwapParam } from "../../utils/types";
@@ -37,6 +37,8 @@ export const pumpfunSwap = async (
   swapParam: SwapParam
 ): Promise<VersionedTransaction | null> => {
   try {
+
+    //----------------------- initialize -------------------------
     const { mint, dev, amount, slippage, is_buy, pumpData } = swapParam;
     let instructions: TransactionInstruction[] = [];
     let data: Buffer;
@@ -44,9 +46,7 @@ export const pumpfunSwap = async (
     let minSolOutput = 0;
     let maxSolCost = 0;
 
-    const PROGRAM_ID = PUMP_FUN_PROGRAM;
     const slippageValue = slippage / 100;
-    // Ensure fixed input amount by using exact amount in lamports
     const fixedInputAmount = amount;
     const amountInLamports = is_buy
       ? Math.floor(fixedInputAmount * LAMPORTS_PER_SOL)
@@ -57,6 +57,42 @@ export const pumpfunSwap = async (
       wallet.publicKey,
       true
     );
+
+    //----------------------- temp function -------------------------
+
+    const getSwapBufferArray = (token: number, sol: number) => {
+      if (is_buy) {
+        // Calculate expected token output based on fixed input amount
+        tokenOut = Math.floor((amountInLamports * token) / sol);
+        const solInWithSlippage = fixedInputAmount * (1 + slippageValue);
+        maxSolCost = Math.floor(solInWithSlippage * LAMPORTS_PER_SOL);
+
+        data = Buffer.concat([
+          BUY_BUFFER,
+          bufferFromUInt64(tokenOut),
+          bufferFromUInt64(maxSolCost),
+        ]);
+      } else {
+        minSolOutput = Math.floor( (amountInLamports * (1 - slippageValue) * sol) / token);
+        data = Buffer.concat([
+          SELL_BUFFER,
+          bufferFromUInt64(amountInLamports),
+          bufferFromUInt64(minSolOutput),
+        ]);
+      }
+      return data;
+    }
+
+    const createAtaIns = (userBaseTokenAccount: PublicKey, isWSOL: boolean) => {
+      return spl.createAssociatedTokenAccountIdempotentInstruction(
+        wallet.publicKey,
+        userBaseTokenAccount,
+        wallet.publicKey,
+        isWSOL ? WSOL : new PublicKey(mint)
+      )
+    }
+
+    //----------------------- build instruction -------------------------
 
     if (Number(pumpData.virtualSolReserves) * Number(pumpData.virtualTokenReserves) == 0) {
       // pump amm swap
@@ -113,84 +149,36 @@ export const pumpfunSwap = async (
         { pubkey: pool_base_token_account, isSigner: false, isWritable: true },
         { pubkey: pool_quote_token_account, isSigner: false, isWritable: true },
         { pubkey: PROTOCOL_FEE_RECEPCIENT, isSigner: false, isWritable: false },
-        {
-          pubkey: PROTOCOL_FEE_RECEPCIENT_TOKEN_ACCOUNT,
-          isSigner: false,
-          isWritable: true,
-        },
+        { pubkey: PROTOCOL_FEE_RECEPCIENT_TOKEN_ACCOUNT, isSigner: false, isWritable: true, },
         { pubkey: TOKEN_PROGRAM, isSigner: false, isWritable: false },
         { pubkey: TOKEN_PROGRAM, isSigner: false, isWritable: false },
         { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
-        {
-          pubkey: ASSOCIATED_TOKEN_PROGRAM_ID,
-          isSigner: false,
-          isWritable: false,
-        },
-        {
-          pubkey: EVENT_AUTHORITY_PUMPSWAP,
-          isSigner: false,
-          isWritable: false,
-        },
+        { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+        { pubkey: EVENT_AUTHORITY_PUMPSWAP, isSigner: false, isWritable: false },
         { pubkey: PUMP_AMM_PROGRAM, isSigner: false, isWritable: false },
         { pubkey: coinCreatorVaultAta, isSigner: false, isWritable: true },
-        {
-          pubkey: coinCreatorVaultAuthority,
-          isSigner: false,
-          isWritable: false,
-        },
+        { pubkey: coinCreatorVaultAuthority, isSigner: false, isWritable: false },
       ];
 
-      if (is_buy) {
-        tokenOut = Math.floor(
-          (amountInLamports * Number(poolBaseTokenReserves)) /
-            Number(poolQuoteTokenReserves)
-        );
-        const solInWithSlippage = amount * (1 + slippageValue);
-        maxSolCost = Math.floor(solInWithSlippage * LAMPORTS_PER_SOL);
-        data = Buffer.concat([
-          BUY_BUFFER,
-          bufferFromUInt64(tokenOut),
-          bufferFromUInt64(maxSolCost),
-        ]);
-      } else {
-        minSolOutput = Math.floor(
-          (amountInLamports *
-            (1 - slippageValue) *
-            Number(poolQuoteTokenReserves)) /
-            Number(poolBaseTokenReserves)
-        );
-        data = Buffer.concat([
-          SELL_BUFFER,
-          bufferFromUInt64(amountInLamports),
-          bufferFromUInt64(minSolOutput),
-        ]);
-      }
+      data = getSwapBufferArray(Number(poolBaseTokenReserves), Number(poolQuoteTokenReserves));
+
+      const pumpInstruction = new TransactionInstruction({
+        keys,
+        programId: PUMP_AMM_PROGRAM,
+        data,
+      });
 
       instructions = is_buy
         ? [
-            spl.createAssociatedTokenAccountIdempotentInstruction(
-              wallet.publicKey,
-              userBaseTokenAccount,
-              wallet.publicKey,
-              new PublicKey(mint)
-            ),
-            spl.createAssociatedTokenAccountIdempotentInstruction(
-              wallet.publicKey,
-              userQuoteTokenAccount,
-              wallet.publicKey,
-              WSOL
-            ),
+            createAtaIns(userBaseTokenAccount, false),
+            createAtaIns(userQuoteTokenAccount, true),
             SystemProgram.transfer({
               fromPubkey: wallet.publicKey,
               toPubkey: userQuoteTokenAccount,
               lamports: maxSolCost,
             }),
             spl.createSyncNativeInstruction(userQuoteTokenAccount),
-            new TransactionInstruction({
-              keys,
-              programId: PUMP_AMM_PROGRAM,
-              data,
-            }),
+            pumpInstruction,
             spl.createCloseAccountInstruction(
               userQuoteTokenAccount,
               wallet.publicKey,
@@ -198,17 +186,8 @@ export const pumpfunSwap = async (
             ),
           ]
         : [
-            spl.createAssociatedTokenAccountIdempotentInstruction(
-              wallet.publicKey,
-              userQuoteTokenAccount,
-              wallet.publicKey,
-              WSOL
-            ),
-            new TransactionInstruction({
-              keys,
-              programId: PUMP_AMM_PROGRAM,
-              data,
-            }),
+            createAtaIns(userQuoteTokenAccount, true),
+            pumpInstruction,
             spl.createCloseAccountInstruction(
               userQuoteTokenAccount,
               wallet.publicKey,
@@ -220,7 +199,7 @@ export const pumpfunSwap = async (
       // console.log("Pump Fun swap");
       const CREATOR_FEE_VAULT = PublicKey.findProgramAddressSync(
         [Buffer.from("creator-vault"), new PublicKey(dev).toBuffer()],
-        PROGRAM_ID
+        PUMP_FUN_PROGRAM
       )[0];
 
       const keys = [
@@ -238,33 +217,8 @@ export const pumpfunSwap = async (
         { pubkey: PUMP_FUN_PROGRAM, isSigner: false, isWritable: false },
       ];
 
-      if (is_buy) {
-        // Calculate expected token output based on fixed input amount
-        tokenOut = Math.floor(
-          (amountInLamports * pumpData.virtualTokenReserves) /
-            pumpData.virtualSolReserves
-        );
-        const solInWithSlippage = fixedInputAmount * (1 + slippageValue);
-        const maxSolCost = Math.floor(solInWithSlippage * LAMPORTS_PER_SOL);
+      data = getSwapBufferArray(Number(pumpData.virtualTokenReserves), Number(pumpData.virtualSolReserves));
 
-        data = Buffer.concat([
-          BUY_BUFFER,
-          bufferFromUInt64(tokenOut),
-          bufferFromUInt64(maxSolCost),
-        ]);
-      } else {
-        minSolOutput = Math.floor(
-          (amountInLamports *
-            (1 - slippageValue) *
-            pumpData.virtualSolReserves) /
-            pumpData.virtualTokenReserves
-        );
-        data = Buffer.concat([
-          SELL_BUFFER,
-          bufferFromUInt64(amountInLamports),
-          bufferFromUInt64(minSolOutput),
-        ]);
-      }
       const pumpInstruction = new TransactionInstruction({
         keys,
         programId: PUMP_FUN_PROGRAM,
@@ -272,12 +226,7 @@ export const pumpfunSwap = async (
       });
 
       instructions = [
-        spl.createAssociatedTokenAccountIdempotentInstruction(
-          wallet.publicKey,
-          splAta,
-          wallet.publicKey,
-          new PublicKey(mint)
-        ),
+        createAtaIns(splAta, false),
         pumpInstruction,
       ]
     }
@@ -285,7 +234,7 @@ export const pumpfunSwap = async (
     //----------------------- priority fee -------------------------
 
     // Add both computeUnitLimit and computeUnitPrice for priority fees 
-    const priorityFee = 10_000;
+    const priorityFee = 200_000;
     const computeUnitPriceInstruction =
       ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: priorityFee, // Set the priority fee (in micro-lamports)
@@ -293,10 +242,9 @@ export const pumpfunSwap = async (
 
     const computeUnitLimitInstruction =
       ComputeBudgetProgram.setComputeUnitLimit({
-        units: 130_000, // Set an appropriate compute unit limit
+        units: 150_000, // Set an appropriate compute unit limit
       });
 
-    // Add compute budget instructions at the beginning of the transaction
     instructions.unshift(
       computeUnitPriceInstruction,
       computeUnitLimitInstruction
