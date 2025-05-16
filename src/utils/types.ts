@@ -29,3 +29,12 @@ export type PumpData = {
   virtualSolReserves: number,
   virtualTokenReserves: number,
 };
+
+export type IPumpAmmData = {
+  dev: string,
+  pool: PublicKey,
+  poolBaseTokenAccount: PublicKey,
+  poolBaseTokenReserves: number,
+  poolQuoteTokenAccount: PublicKey,
+  poolQuoteTokenReserves: number
+}

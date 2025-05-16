@@ -105,7 +105,7 @@ export const getSolPrice = async () => {
     const BaseURL = SOL_URL;
     const response = await fetch(BaseURL);
     const data = await response.json();
-    const price = data.data[WSOL]?.price;
+    const price = data.data[WSOL.toBase58()]?.price;
     return price;
   } catch (error) {
     return 0;
