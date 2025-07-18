@@ -1,3 +1,4 @@
+//authorzied by william
 import chalk from 'chalk';
 import * as readline from 'readline';
 import { wallet } from './config/config';
