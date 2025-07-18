@@ -1,0 +1,3 @@
+Each instruction, account, and signature in a transaction takes up bytes.
+
+The Solana protocol enforces a fixed maximum transaction size so that every transaction can be efficiently propagated across the network.
