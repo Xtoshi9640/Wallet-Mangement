@@ -7,4 +7,4 @@
 https://github.com/user-attachments/assets/fe3add13-fd25-414f-8258-f79127cc8b60
 
 ## Overview
-This script is designed to manage Solana wallets, allowing users to check wallet balance, wallet tokens, clean wallet and close account.
+This script is designed to manage the Solana wallets, allowing users to check wallet balance, wallet tokens, clean wallet and close account.
